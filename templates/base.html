@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>{% block title %}PriAs - 问答系统{% endblock %}</title>
+    <!-- 引入Bootstrap样式表 -->
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
+
+    {% block custom_css %}
+    {% endblock %}
+    <style>
+        body {
+            background-color: #f8f9fa;
+            margin: 0; /* 清除默认的 body 边距 */
+        }
+
+        .container-fluid {
+            height: 100vh;
+            display: flex;
+        }
+
+        #left-panel {
+            width: 25%;
+            background-color: #e9ecef;
+            padding: 20px;
+            border-radius: 10px 0 0 10px;
+
+        }
+
+        #right-panel {
+            width: 75%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            border-radius: 0 10px 10px 0;
+        }
+
+        #project-name {
+            font-size: 35px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            flex-grow: 1; /* 使用 Flex 布局，确保提问输入框占据剩余空间 */
+        }
+
+        .btn-group-wrapper {
+            background-color: white; /* 白色背景 */
+            border-radius: 8px; /* 圆角矩形 */
+            padding: 20px; /* 内边距 */
+        {#margin-bottom: 20px; /* 底部边距 */#}
+        }
+    </style>
+</head>
+<body>
+
+<!-- 主容器 -->
+<div class="container-fluid">
+    <!-- 左侧面板 -->
+    <div id="left-panel">
+        <!-- 项目名称 -->
+        <br>
+        <h6 id="project-name">PriAs - 大模型私人助理</h6>
+        <br>
+        <!-- 对话和知识库管理按钮组 -->
+        <div class="btn-group-wrapper" style="margin-bottom: 20px;">
+            <button type="button" class="btn btn-outline-success active btn-block" style="margin-bottom: 20px;">对话
+            </button>
+            <button type="button" class="btn btn-outline-success btn-block">知识库管理
+            </button>
+        </div>
+        {% block left_content %}
+        {% endblock %}
+    </div>
+
+    <!-- 右侧面板 -->
+    <div id="right-panel">
+        {% block right_content %}
+        {% endblock %}
+    </div>
+</div>
+
+<!-- 引入jQuery、Popper.js和Bootstrap脚本 -->
+<script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/jquery-3.3.1.slim.min.js' %}"></script>
+<script src="{% static 'js/popper.min.js' %}"></script>
+{% block custom_js %}
+{% endblock %}
+</body>
+</html>
