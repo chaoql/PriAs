@@ -7,7 +7,6 @@
     <title>{% block title %}PriAs - 问答系统{% endblock %}</title>
     <!-- 引入Bootstrap样式表 -->
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
-
     {% block custom_css %}
     {% endblock %}
     <style>
@@ -53,7 +52,7 @@
             background-color: white; /* 白色背景 */
             border-radius: 8px; /* 圆角矩形 */
             padding: 20px; /* 内边距 */
-        {#margin-bottom: 20px; /* 底部边距 */#}
+            {#margin-bottom: 20px; /* 底部边距 */#}
         }
     </style>
 </head>
@@ -74,8 +73,10 @@
             <button type="button" class="btn btn-outline-success btn-block">知识库管理
             </button>
         </div>
+
         {% block left_content %}
         {% endblock %}
+
     </div>
 
     <!-- 右侧面板 -->

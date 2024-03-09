@@ -5,9 +5,9 @@
     <div class="form-group">
         <label for="model-select">选择LLM模型</label>
         <select class="form-control" id="model-select">
-            <option>模型1</option>
-            <option>模型2</option>
-            <option>模型3</option>
+            {% for model in models %}
+                <option>{{ model }}</option>
+            {% endfor %}
         </select>
     </div>
 
@@ -15,9 +15,9 @@
     <div class="form-group">
         <label for="method-select">选择使用模式</label>
         <select class="form-control" id="method-select">
-            <option>方法1</option>
-            <option>方法2</option>
-            <option>方法3</option>
+            {% for function in functions %}
+                <option>{{ function }}</option>
+            {% endfor %}
         </select>
     </div>
 
@@ -26,17 +26,24 @@
     </div>
 {% endblock %}
 {% block right_content %}
-    <!-- 右侧大的输入框 -->
-    <div class="form-group">
-        <textarea class="form-control" id="question-input-large" rows="32px"></textarea>
+    <div class="form-group" id="append">
+        <p>
+            {% if message %}
+                【question】: {{ question }}
+                <br>
+                【answer】: {{ message }}
+            {% endif %}
+        </p>
     </div>
     <form action="{% url 'index' %}" method="post" autocomplete="off">
         <div class="input-group mb-3">
-            <input name="question" type="text" class="form-control" placeholder="question" aria-label="Recipient's username"
+            <input name="question" type="text" class="form-control" placeholder="question"
+                   aria-label="Recipient's username"
                    aria-describedby="button-addon2" maxlength="1000">
             <div class="input-group-append">
                 <input class="btn btn-outline-success active" type="submit" id="button-addon2"></input>
             </div>
         </div>
+        {% csrf_token %}
     </form>
 {% endblock %}
