@@ -52,7 +52,74 @@
             background-color: white; /* 白色背景 */
             border-radius: 8px; /* 圆角矩形 */
             padding: 20px; /* 内边距 */
-            {#margin-bottom: 20px; /* 底部边距 */#}
+        {#margin-bottom: 20px; /* 底部边距 */#}
+        }
+
+        .chatBox {
+            position: relative;
+            width: 100%;
+            height: calc(100% - 120px);
+            padding: 50px;
+            overflow-y: auto;
+        }
+
+        .message {
+            position: relative;
+            display: flex;
+            width: 100%;
+            margin: 5px 0;
+        }
+
+        .message p {
+            position: relative;
+            right: 0;
+            text-align: right;
+            max-width: 65%;
+            padding: 12px;
+            background: #b3d7ff;
+            {#background: #dcf8c6;#}
+            border-radius: 10px;
+            font-size: 0.9em;
+        }
+
+        .message p::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: -12px;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #b3d7ff 0%, #b3d7ff 50%, transparent 50%, transparent);
+        }
+
+        .message p span {
+            display: block;
+            margin-top: 5px;
+            font-size: 0.85em;
+            opacity: 0.5;
+        }
+
+        .my_message {
+            justify-content: flex-end;
+        }
+
+        .frnd_message {
+            justify-content: flex-start;
+        }
+
+        .frnd_message p {
+            background: #fff;
+            text-align: left;
+        }
+
+        .message.frnd_message p::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -12px;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(225deg, #fff 0%, #fff 50%, transparent 50%, transparent);
         }
     </style>
 </head>
@@ -68,10 +135,10 @@
         <br>
         <!-- 对话和知识库管理按钮组 -->
         <div class="btn-group-wrapper" style="margin-bottom: 20px;">
-            <button type="button" class="btn btn-outline-success active btn-block" style="margin-bottom: 20px;">对话
-            </button>
-            <button type="button" class="btn btn-outline-success btn-block">知识库管理
-            </button>
+            <a type="button" class="btn btn-outline-primary {% if current_page == 'index' %}active{% endif %} btn-block"
+               style="margin-bottom: 20px;" href="{% url 'index' %}">对话</a>
+            <a type="button" class="btn btn-outline-primary {% if current_page == 'km' %}active{% endif %} btn-block"
+               href="{% url 'km' %}">新建知识库</a>
         </div>
 
         {% block left_content %}
