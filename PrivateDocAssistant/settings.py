@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
@@ -26,7 +25,6 @@ SECRET_KEY = "django-insecure-xm_qv-))fvh9+!x7jju0ilt2x=%lwp--)3*$(ql9)f@ol=k7(i
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -70,7 +68,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "PrivateDocAssistant.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
@@ -80,7 +77,6 @@ DATABASES = {
         "NAME": BASE_DIR / "db.sqlite3",
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
@@ -100,7 +96,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
 
@@ -112,16 +107,24 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = "static/"
 
-STATICFILES_DIRS = [ # 共用一个static文件夹的话需要添加，使项目可以找到static文件静态资源(django可以自动在各个app下查找static资源)
+STATICFILES_DIRS = [  # 共用一个static文件夹的话需要添加，使项目可以找到static文件静态资源(django可以自动在各个app下查找static资源)
     os.path.join(BASE_DIR, 'static')
 ]
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+OPENAI_API_KEY = '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'  # openai：大模型
+TAVILY_API_KEY = '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'  # tavily：搜索引擎
+LANGCHAIN_TRACING_V2 = "true"
+LANGCHAIN_API_KEY = "ls__e3fb503b28df4b2f86661b5cddaf3712"  # langsmith：调试
+
+PINECONE_API_KEY = '2f614cfc-efef-401e-87b0-d44aea76b3e1'
+ANTHROPIC_API_KEY = "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"  # Claude，美国人工智能初创公司Anthropic发布的大型语言模型家族 | 要付费用不了
+# STORE_PATH = os.path.join(BASE_DIR, 'QA\VectorStore')
+PERSIST_DIRECTORY = os.path.join(BASE_DIR, 'QA\VectorStore')

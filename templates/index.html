@@ -2,11 +2,12 @@
 
 {% block left_content %}
     <!-- 模型选择下拉框 -->
+    <form action="{% url 'index' %}" method="post" autocomplete="off">
     <div class="form-group">
         <label for="model-select">选择LLM模型</label>
-        <select class="form-control" id="model-select">
-            {% for model in models %}
-                <option>{{ model }}</option>
+        <select class="form-control" id="model-select" name="model">
+            {% for i in models %}
+                <option value="{{ i }}" {% if i == model %}selected="selected"{% endif %}>{{ i }}</option>
             {% endfor %}
         </select>
     </div>
@@ -14,16 +15,17 @@
     <!-- 方法选择下拉框 -->
     <div class="form-group">
         <label for="method-select">选择使用模式</label>
-        <select class="form-control" id="method-select">
-            {% for function in functions %}
-                <option>{{ function }}</option>
+        <select class="form-control" id="method-select" name="function">
+            {% for i in functions %}
+                <option value="{{ i }}" {% if i == function %} selected="selected" {% endif %}>{{ i }}</option>
             {% endfor %}
         </select>
     </div>
 
     <div class="form-group">
         <label for="customRange3">Temperature:</label>
-        <input type="range" class="custom-range" min="0" max="5" step="0.1" id="customRange3">
+        <input type="range" class="custom-range" min="0" max="5" step="0.1" id="customRange3" name="temperature"
+               value="{{ temperature }}">
     </div>
 {% endblock %}
 {% block right_content %}
