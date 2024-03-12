@@ -119,12 +119,3 @@ STATICFILES_DIRS = [  # 共用一个static文件夹的话需要添加，使项�
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-OPENAI_API_KEY = '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'  # openai：大模型
-TAVILY_API_KEY = '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'  # tavily：搜索引擎
-LANGCHAIN_TRACING_V2 = "true"
-LANGCHAIN_API_KEY = "ls__e3fb503b28df4b2f86661b5cddaf3712"  # langsmith：调试
-
-PINECONE_API_KEY = '2f614cfc-efef-401e-87b0-d44aea76b3e1'
-ANTHROPIC_API_KEY = "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"  # Claude，美国人工智能初创公司Anthropic发布的大型语言模型家族 | 要付费用不了
-# STORE_PATH = os.path.join(BASE_DIR, 'QA\VectorStore')
-PERSIST_DIRECTORY = os.path.join(BASE_DIR, 'QA\VectorStore')
