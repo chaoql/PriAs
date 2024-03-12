@@ -5,8 +5,10 @@
 {% block right_content %}
     <div class="form-group">
         <label>请选择或新键知识库：</label>
-        <select class="form-control" id="method-select" style="margin-bottom: 20px;">
-            <option>#</option>
+        <select class="form-control" id="method-select" name="db"  style="margin-bottom: 20px;">
+            {% for i in dbs %}
+                <option value="{{ i }}" {% if i == db %} selected="selected" {% endif %}>{{ i }}</option>
+            {% endfor %}
         </select>
         <label for="exampleFormControlFile1">上传知识文件：</label>
         <div class="card">

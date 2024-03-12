@@ -1,15 +1,14 @@
 import os
-import bs4
 from langchain import hub
-from langchain_community.document_loaders import WebBaseLoader
-from langchain_community.llms import QianfanLLMEndpoint
+from apps.QA.RAG.prompt import contextualizePrompt, qaPrompt
 from langchain_community.vectorstores import Chroma
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from dotenv import load_dotenv, find_dotenv
-from langchain_ai21 import AI21Embeddings
+from langchain_community.embeddings import QianfanEmbeddingsEndpoint
+from langchain_core.messages import AIMessage, HumanMessage
+from apps.QA.RAG.llm import getLLM
 
 _ = load_dotenv(find_dotenv())  # 导入环境
 
@@ -23,50 +22,62 @@ def format_docs(docs):
     return "\n\n".join(doc.page_content for doc in docs)
 
 
-def load_web(web_path):
-    bs_strainer = bs4.SoupStrainer(class_=("post-content", "post-title", "post-header"))
-    loader = WebBaseLoader(  # 使用  WebBaseLoader  来将  HTML  页面中的所有文本加载到文档格式中，以便我们可以使用下游。
-        web_paths=("https://lilianweng.github.io/posts/2023-06-23-agent/",),
-        bs_kwargs={"parse_only": bs_strainer},  # 指定了在解析HTML或XML文档时应该仅考虑包含特定CSS类的标签。
-    )
-    documents = loader.load()
-    return documents
-
-
 def split(docs, chunk_size=1000, chunk_overlap=200):
     """
     切割文本
     :return:
     """
-    # Indexing: Split
     # chunk_size=1000指定了每个文本块的大小为1000个字符
     # chunk_overlap=200指定了文本块之间的重叠部分为200个字符。
     # add_start_index=True ，这样每个分裂的文档在初始文档中开始的字符索引就被保存为元数据属性“start_index”。
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap, add_start_index=True)
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap,
+                                                   add_start_index=True)
     splits = text_splitter.split_documents(docs)
     return splits
 
 
-def store(splits):
+def store(splits, embeddings_name):
     """
     向量数据库存储
     :return:
     """
     # 指定了使用OpenAI的嵌入模型来对文档进行嵌入（embedding）操作。通过这个步骤，文档数据将被转换为向量表示，以便进行后续的分析和处理。
-    embeddings = AI21Embeddings()
+    # embeddings = AI21Embeddings()
+    embeddings = QianfanEmbeddingsEndpoint()
     vectorstore = Chroma.from_documents(documents=splits, embedding=embeddings)
     return vectorstore
 
 
+def contextualized_question(input: dict):
+    """
+    存在历史记录则对问题进行背景说明。否则返回原问题
+    :param input:
+    :return:
+    """
+    if input.get("chat_history"):
+        return input.get("contextualize_q_chain")
+    else:
+        return input["question"]
+
+
+def contextualizeChain(llm):
+    contextualize_q_prompt = contextualizePrompt()
+    contextualize_q_chain = contextualize_q_prompt | llm | StrOutputParser()  # 对问题进行背景说明的链
+    return contextualize_q_chain
+
+
 def chain(vectorstore, model_name, temperature):
-    # Retrieve and generate using the relevant snippets of the blog.
     retriever = vectorstore.as_retriever()
-    prompt = hub.pull("rlm/rag-prompt")  # RAG提示模板
-    # llm = ChatOpenAI(model_name=model_name, temperature=temperature)
-    llm = QianfanLLMEndpoint(streaming=True)
+    # prompt = hub.pull("rlm/rag-prompt")  # RAG提示模板
+    qa_prompt = qaPrompt()
+    print(model_name)
+    llm = getLLM(model_name, temperature)
+    print(llm)
     rag_chain = (
-            {"context": retriever | format_docs, "question": RunnablePassthrough()}
-            | prompt
+            RunnablePassthrough.assign(
+                context=contextualized_question | retriever | format_docs
+            )
+            | qa_prompt
             | llm
             | StrOutputParser()
     )
