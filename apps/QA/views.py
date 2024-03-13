@@ -12,6 +12,7 @@ from langchain_ai21 import AI21Embeddings
 from apps.QA.RAG.load import load_web
 from langchain_core.messages import AIMessage, HumanMessage
 from apps.QA.RAG.llm import getLLM
+import apps.utils as utils
 
 
 @method_decorator(csrf_exempt, name="dispatch")
@@ -38,12 +39,12 @@ class FirstView(View):
                 splits = chain.split(docs, chunk_size=1000, chunk_overlap=200)
                 createStore("Intial_db", splits)
                 print("创建初始知识库：Intial_db")
-            # ！ 程序启动时就应该创建初始知识库，并存入一个空文件
+            # 程序启动时就应该创建初始知识库，并存入一个空文件!!!!!
             persist_directory = "apps/QA/VectorStore/" + db
             vectorstore = Chroma(persist_directory=persist_directory, embedding_function=AI21Embeddings())  # 加载向量数据库
             with_message_history = chain.chain(vectorstore=vectorstore, model_name=model, temperature=temperature)
 
-            session_id = "test_9"  # 考虑如何对聊天记录编号？？？？
+            session_id = "test_9"  # 考虑如何对聊天记录编号？？？？？
             answer = with_message_history.invoke(
                 {"input": question},
                 config={"configurable": {"session_id": session_id}},
@@ -53,11 +54,7 @@ class FirstView(View):
             # What are common ways of doing it?
 
             current_page = 'index'
-            print("问题：" + question)  # What is Task Decomposition?
-            print("模型：" + model)
-            print("知识库：" + db)
-            print("temperature：" + str(temperature))
-            print("答案：" + answer)
+            utils.printMidRes(question, model, db, temperature, answer)
             return render(request, "index.html", {"question": question, "message": str(answer),
                                                   "models": self.models, "model": model,
                                                   "db": db, "temperature": temperature,
