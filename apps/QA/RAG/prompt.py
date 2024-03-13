@@ -13,8 +13,8 @@ def qaPrompt():
     qa_prompt = ChatPromptTemplate.from_messages(  # 答复prompt
         [
             ("system", qa_system_prompt),
-            MessagesPlaceholder(variable_name="chat_history"),
-            ("human", "{question}"),
+            MessagesPlaceholder(variable_name="history"),
+            ("human", "{input}"),
         ]
     )
     return qa_prompt
@@ -32,8 +32,8 @@ def contextualizePrompt():
     contextualize_q_prompt = ChatPromptTemplate.from_messages(
         [
             ("system", contextualize_q_system_prompt),
-            MessagesPlaceholder(variable_name="chat_history"),
-            ("human", "{question}"),
+            MessagesPlaceholder(variable_name="history"),
+            ("human", "{input}"),
         ]
     )
     return contextualize_q_prompt

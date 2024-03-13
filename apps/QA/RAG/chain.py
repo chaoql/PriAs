@@ -9,6 +9,8 @@ from dotenv import load_dotenv, find_dotenv
 from langchain_community.embeddings import QianfanEmbeddingsEndpoint
 from langchain_core.messages import AIMessage, HumanMessage
 from apps.QA.RAG.llm import getLLM
+from langchain_community.chat_message_histories import RedisChatMessageHistory
+from langchain_core.runnables.history import RunnableWithMessageHistory
 
 _ = load_dotenv(find_dotenv())  # 导入环境
 
@@ -48,37 +50,33 @@ def store(splits, embeddings_name):
     return vectorstore
 
 
-def contextualized_question(input: dict):
-    """
-    存在历史记录则对问题进行背景说明。否则返回原问题
-    :param input:
-    :return:
-    """
-    if input.get("chat_history"):
-        return input.get("contextualize_q_chain")
-    else:
-        return input["question"]
-
-
 def contextualizeChain(llm):
     contextualize_q_prompt = contextualizePrompt()
     contextualize_q_chain = contextualize_q_prompt | llm | StrOutputParser()  # 对问题进行背景说明的链
     return contextualize_q_chain
 
 
+def get_message_history(session_id: str) -> RedisChatMessageHistory:
+    return RedisChatMessageHistory(session_id, url=os.getenv("REDIS_URL"))
+
+
 def chain(vectorstore, model_name, temperature):
     retriever = vectorstore.as_retriever()
-    # prompt = hub.pull("rlm/rag-prompt")  # RAG提示模板
-    qa_prompt = qaPrompt()
-    print(model_name)
     llm = getLLM(model_name, temperature)
-    print(llm)
+    contextualize_q_chain = contextualizeChain(llm)
+    qa_prompt = qaPrompt()
     rag_chain = (
             RunnablePassthrough.assign(
-                context=contextualized_question | retriever | format_docs
+                context=contextualize_q_chain | retriever | format_docs
             )
             | qa_prompt
             | llm
             | StrOutputParser()
     )
-    return rag_chain
+    with_message_history = RunnableWithMessageHistory(
+        rag_chain,
+        get_message_history,
+        input_messages_key="input",
+        history_messages_key="history",
+    )
+    return with_message_history

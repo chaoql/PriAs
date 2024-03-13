@@ -28,46 +28,40 @@ class FirstView(View):
     def post(self, request, *args, **kwargs):
         question_form = questionForm(request.POST)
         if question_form.is_valid():
-            second_question = question_form.cleaned_data["question"]  # What are common ways of doing it?
+            question = question_form.cleaned_data["question"]  # What are common ways of doing it?
             model = question_form.cleaned_data["model"]
-            print("模型：" + model)
             db = question_form.cleaned_data["db"]
             temperature = question_form.cleaned_data["temperature"]
-            docs = load_web(web_path="https://lilianweng.github.io/posts/2023-06-23-agent/")
-            splits = chain.split(docs, chunk_size=1000, chunk_overlap=200)
-            filenames = os.listdir("D:\\MyPyCharm\\PrivateDocAssistant\\apps\\QA\\VectorStore")
+            filenames = os.listdir(os.getenv("persist_directory"))
             if "Intial_db" not in filenames:  # 初始数据库
+                docs = load_web(web_path="https://lilianweng.github.io/posts/2023-06-23-agent/")
+                splits = chain.split(docs, chunk_size=1000, chunk_overlap=200)
                 createStore("Intial_db", splits)
                 print("创建初始知识库：Intial_db")
             # ！ 程序启动时就应该创建初始知识库，并存入一个空文件
             persist_directory = "apps/QA/VectorStore/" + db
-            vectorstore = Chroma(persist_directory=persist_directory, embedding_function=AI21Embeddings())
-            rag_chain = chain.chain(vectorstore=vectorstore, model_name=model, temperature=temperature)
-            contextualize_q_chain = contextualizeChain(llm=getLLM(model_name=model, temperature=temperature))
+            vectorstore = Chroma(persist_directory=persist_directory, embedding_function=AI21Embeddings())  # 加载向量数据库
+            with_message_history = chain.chain(vectorstore=vectorstore, model_name=model, temperature=temperature)
 
-            chat_history = []
-            question = "What is Task Decomposition?"
-            ai_msg = rag_chain.invoke(
-                {"question": question, "chat_history": chat_history, "contextualize_q_chain": contextualize_q_chain})
-            chat_history.extend([HumanMessage(content=question), ai_msg])  # 首次执行没有历史记录，正常调用retriever->prompt->llm
-            # 第二次执行存在历史记录，调用顺序为：
-            # contextualize_q_prompt -> llm -> StrOutputParser -> retriever -> prompt -> llm
-            # second_question = "What are common ways of doing it?"
-            answer = rag_chain.invoke({"question": second_question, "chat_history": chat_history,
-                                       "contextualize_q_chain": contextualize_q_chain})
+            session_id = "test_9"  # 考虑如何对聊天记录编号？？？？
+            answer = with_message_history.invoke(
+                {"input": question},
+                config={"configurable": {"session_id": session_id}},
+            )
+            # 测试：（下述问题仅能通过RAG得到的答案回答，用于测试RAG是否成功；第二个问题用于测试问题一的聊天记录是否已被大模型考虑在内）
+            # What is Task Decomposition?
+            # What are common ways of doing it?
 
-            # answer = rag_chain.invoke(question)
             current_page = 'index'
             print("问题：" + question)  # What is Task Decomposition?
             print("模型：" + model)
             print("知识库：" + db)
             print("temperature：" + str(temperature))
             print("答案：" + answer)
-            return render(request, "index.html", {"question": second_question, "message": str(answer),
+            return render(request, "index.html", {"question": question, "message": str(answer),
                                                   "models": self.models, "model": model,
                                                   "db": db, "temperature": temperature,
-                                                  "dbs": self.dbs,
-                                                  'current_page': current_page})
+                                                  "dbs": self.dbs, 'current_page': current_page})
         return render(request, "index.html")
 
 
