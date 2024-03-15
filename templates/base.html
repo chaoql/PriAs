@@ -77,8 +77,7 @@
             max-width: 65%;
             padding: 12px;
             background: #b3d7ff;
-            {#background: #dcf8c6;#}
-            border-radius: 10px;
+        {#background: #dcf8c6;#} border-radius: 10px;
             font-size: 0.9em;
         }
 
@@ -138,7 +137,9 @@
             <a type="button" class="btn btn-outline-primary {% if current_page == 'index' %}active{% endif %} btn-block"
                style="margin-bottom: 20px;" href="{% url 'index' %}">对话</a>
             <a type="button" class="btn btn-outline-primary {% if current_page == 'km' %}active{% endif %} btn-block"
-               href="{% url 'km' %}">新建知识库</a>
+               style="margin-bottom: 20px;" href="{% url 'km' %}">知识库管理</a>
+{#            <a type="button" class="btn btn-outline-primary {% if current_page == 'kn' %}active{% endif %} btn-block"#}
+{#               href="{% url 'km' %}">新建知识库</a>#}
         </div>
 
         {% block left_content %}

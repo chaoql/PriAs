@@ -38,16 +38,16 @@ def split(docs, chunk_size=1000, chunk_overlap=200):
     return splits
 
 
-def store(splits, embeddings_name):
-    """
-    向量数据库存储
-    :return:
-    """
-    # 指定了使用OpenAI的嵌入模型来对文档进行嵌入（embedding）操作。通过这个步骤，文档数据将被转换为向量表示，以便进行后续的分析和处理。
-    # embeddings = AI21Embeddings()
-    embeddings = QianfanEmbeddingsEndpoint()
-    vectorstore = Chroma.from_documents(documents=splits, embedding=embeddings)
-    return vectorstore
+# def store(splits, embeddings_name):
+#     """
+#     向量数据库存储
+#     :return:
+#     """
+#     # 指定了使用OpenAI的嵌入模型来对文档进行嵌入（embedding）操作。通过这个步骤，文档数据将被转换为向量表示，以便进行后续的分析和处理。
+#     # embeddings = AI21Embeddings()
+#     embeddings = QianfanEmbeddingsEndpoint()
+#     vectorstore = Chroma.from_documents(documents=splits, embedding=embeddings)
+#     return vectorstore
 
 
 def contextualizeChain(llm):

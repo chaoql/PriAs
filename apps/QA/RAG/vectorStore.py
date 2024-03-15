@@ -12,7 +12,9 @@ def createStore(Kname, texts):
     if Kname in filenames:
         return False
     persist_directory = "apps/QA/VectorStore/" + Kname
-    embeddings = AI21Embeddings()
+    from langchain_openai import OpenAIEmbeddings
+    embeddings = OpenAIEmbeddings()
+    # squared L2 norm
     vectordb = Chroma.from_documents(documents=texts, embedding=embeddings, persist_directory=persist_directory)
     vectordb.persist()
     return True
