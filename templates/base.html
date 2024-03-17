@@ -133,14 +133,25 @@
         <h6 id="project-name">PriAs - 大模型私人助理</h6>
         <br>
         <!-- 对话和知识库管理按钮组 -->
-        <div class="btn-group-wrapper" style="margin-bottom: 20px;">
-            <a type="button" class="btn btn-outline-primary {% if current_page == 'index' %}active{% endif %} btn-block"
-               style="margin-bottom: 20px;" href="{% url 'index' %}">对话</a>
-            <a type="button" class="btn btn-outline-primary {% if current_page == 'km' %}active{% endif %} btn-block"
-               style="margin-bottom: 20px;" href="{% url 'km' %}">知识库管理</a>
-{#            <a type="button" class="btn btn-outline-primary {% if current_page == 'kn' %}active{% endif %} btn-block"#}
-{#               href="{% url 'km' %}">新建知识库</a>#}
+        <div class="form-group">
+            <label for="customRange3">功能选择</label>
+            <div class="list-group">
+                {#            <a href="#" class="list-group-item list-group-item-action active" aria-current="true">#}
+                {#                The current link item#}
+                {#            </a>#}
+                <a href="{% url 'index' %}"
+                   class="list-group-item list-group-item-action  {% if current_page == 'index' %}active{% endif %} ">对话</a>
+                <a href="{% url 'km' %}"
+                   class="list-group-item list-group-item-action {% if current_page == 'km' %}active{% endif %}">知识库管理</a>
+            </div>
         </div>
+
+        {#        <div class="btn-group-wrapper" style="margin-bottom: 20px;">#}
+        {#            <a type="button" class="btn btn-outline-primary {% if current_page == 'index' %}active{% endif %} btn-block"#}
+        {#               style="margin-bottom: 20px;" href="{% url 'index' %}">对话</a>#}
+        {#            <a type="button" class="btn btn-outline-primary {% if current_page == 'km' %}active{% endif %} btn-block"#}
+        {#               href="{% url 'km' %}">知识库管理</a>#}
+        {#        </div>#}
 
         {% block left_content %}
         {% endblock %}

@@ -12,6 +12,8 @@ class questionForm(forms.Form):
     model = forms.CharField(required=True)
     db = forms.CharField(required=False)
     temperature = forms.DecimalField(required=True, max_value=1, min_value=0)
+    new_topic = forms.CharField(required=False, max_length=10)
+    old_topic = forms.CharField(required=False, max_length=10)
 
 
 class dbForm(forms.Form):
